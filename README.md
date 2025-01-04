@@ -80,9 +80,9 @@ This section acknowledges the resources, tutorials, and materials used to help i
 - **FontAwesome**: [https://fontawesome.com/](https://fontawesome.com/) - Used for incorporating icons in the user interface (e.g., buttons and interactions).
 
 ## 3. Youtube Videos 
-- **Three.js Tutorial For Absolute Beginners**: [https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho] (https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho) - Wael Yasmina - This tutorial covers the basics of the 3D library Three.js.
+- **Three.js Tutorial For Absolute Beginners**: [https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho](https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho) - Wael Yasmina - This tutorial covers the basics of the 3D library Three.js.
 - **Three.js Animation with Motion Capture**: [https://www.youtube.com/watch?v=Qzy6cQN6aqw](https://www.youtube.com/watch?v=Qzy6cQN6aqw) - Robot Robby talking and explaining about 3D Model and Motion
-- **Creating a SimCity Game with JavaScript & Three.js**: [https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW] (https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW) - Dan Greenheck -  Creating a SimCity Game with JavaScript & Three.js - playlist of small tutorials
+- **Creating a SimCity Game with JavaScript & Three.js**: [https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW](https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW) - Dan Greenheck -  Creating a SimCity Game with JavaScript & Three.js - playlist of small tutorials
 
 
 ## 4. Articles and References
