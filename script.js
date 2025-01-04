@@ -4,6 +4,7 @@ let scene, camera, renderer, player;
 const keys = {};
 let currentRoom = "main";
 let doors = [];
+let cityCars = []; // Para animar os carros na cidade
 
 function init() {
     // Criação da cena
@@ -19,7 +20,7 @@ function init() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Adicionando luzes
+    // Configuração das luzes
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
 
@@ -27,12 +28,9 @@ function init() {
     directionalLight.position.set(5, 10, 7.5);
     scene.add(directionalLight);
 
-    // Criando o jogador
-    player = new THREE.Mesh(
-        new THREE.SphereGeometry(0.2, 16, 16),
-        new THREE.MeshStandardMaterial({ color: 0x0000ff })
-    );
-    player.position.set(0, 0.2, 4);
+    // Criação do jogador como um modelo simplificado de pessoa
+    player = createPlayerModel();
+    player.position.set(0, 0.9, 4); // Ajustar posição inicial
     scene.add(player);
 
     // Configurando sala inicial
@@ -44,11 +42,67 @@ function init() {
     window.addEventListener('resize', onWindowResize);
 }
 
+function createPlayerModel() {
+    // Grupo para unir as partes do corpo
+    const playerGroup = new THREE.Group();
+
+    // Corpo
+    const body = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.2, 0.2, 1, 16),
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    );
+    body.position.y = 0.5; // Levantar o corpo para alinhar os pés
+    playerGroup.add(body);
+
+    // Cabeça
+    const head = new THREE.Mesh(
+        new THREE.SphereGeometry(0.2, 16, 16),
+        new THREE.MeshStandardMaterial({ color: 0xffcc99 })
+    );
+    head.position.y = 1.2; // Colocar a cabeça acima do corpo
+    playerGroup.add(head);
+
+    // Braço esquerdo
+    const leftArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 0.7, 16),
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    );
+    leftArm.position.set(-0.35, 0.85, 0); // Lado esquerdo do corpo
+    leftArm.rotation.z = Math.PI / 6; // Inclinação do braço
+    playerGroup.add(leftArm);
+
+    // Braço direito
+    const rightArm = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 0.7, 16),
+        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+    );
+    rightArm.position.set(0.35, 0.85, 0); // Lado direito do corpo
+    rightArm.rotation.z = -Math.PI / 6; // Inclinação do braço
+    playerGroup.add(rightArm);
+
+    // Perna esquerda
+    const leftLeg = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 0.9, 16),
+        new THREE.MeshStandardMaterial({ color: 0x0000ff })
+    );
+    leftLeg.position.set(-0.15, 0.15, 0); // Lado esquerdo da base do corpo
+    playerGroup.add(leftLeg);
+
+    // Perna direita
+    const rightLeg = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.1, 0.1, 0.9, 16),
+        new THREE.MeshStandardMaterial({ color: 0x0000ff })
+    );
+    rightLeg.position.set(0.15, 0.15, 0); // Lado direito da base do corpo
+    playerGroup.add(rightLeg);
+
+    return playerGroup;
+}
+
 function createMainRoom() {
-    // Limpando objetos da sala anterior
     clearScene();
 
-    // Criando piso
+    // Criação do piso
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
         new THREE.MeshStandardMaterial({ color: 0xcccccc })
@@ -56,7 +110,7 @@ function createMainRoom() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // Criando parede traseira
+    // Criação da parede traseira
     const backWall = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 5),
         new THREE.MeshStandardMaterial({ color: 0xffffff })
@@ -64,7 +118,7 @@ function createMainRoom() {
     backWall.position.set(0, 2.5, -5);
     scene.add(backWall);
 
-    // Criando porta para a próxima sala
+    // Criação daporta para a próxima sala
     const door = new THREE.Mesh(
         new THREE.BoxGeometry(2, 4, 0.1),
         new THREE.MeshStandardMaterial({ color: 0x654321 })
@@ -76,7 +130,6 @@ function createMainRoom() {
 }
 
 function createRoomWithThreeDoors() {
-    // Limpando objetos da sala anterior
     clearScene();
 
     // Criando piso
@@ -121,8 +174,59 @@ function createRoomWithThreeDoors() {
     doors.push(returnDoor);
 }
 
+function createCityRoom() {
+    clearScene();
+
+    // Criando piso
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(50, 50),
+        new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // Criando prédios
+    for (let i = 0; i < 30; i++) {
+        const building = new THREE.Mesh(
+            new THREE.BoxGeometry(1 + Math.random() * 2, 2 + Math.random() * 10, 1 + Math.random() * 2),
+            new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff })
+        );
+        building.position.set(
+            (Math.random() - 0.5) * 40,
+            building.geometry.parameters.height / 2,
+            (Math.random() - 0.5) * 40
+        );
+        scene.add(building);
+    }
+
+    // Criando carros em movimento
+    cityCars = [];
+    for (let i = 0; i < 10; i++) {
+        const car = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 0.5, 2),
+            new THREE.MeshStandardMaterial({ color: Math.random() * 0xffffff })
+        );
+        car.position.set(
+            (Math.random() - 0.5) * 40,
+            0.25,
+            (Math.random() - 0.5) * 40
+        );
+        cityCars.push(car);
+        scene.add(car);
+    }
+
+    // Adicionando porta de retorno
+    const returnDoor = new THREE.Mesh(
+        new THREE.BoxGeometry(2, 4, 0.1),
+        new THREE.MeshStandardMaterial({ color: 0x654321 })
+    );
+    returnDoor.position.set(0, 2, 24.9);
+    returnDoor.name = "returnToThreeDoors";
+    scene.add(returnDoor);
+    doors.push(returnDoor);
+}
+
 function clearScene() {
-    // Mantém apenas a câmera, o jogador e as luzes
     scene.children = scene.children.filter(obj =>
         obj === camera || obj === player || obj.isLight
     );
@@ -153,11 +257,19 @@ function handleDoorCollision(door) {
     if (currentRoom === "main" && door.name === "mainDoor") {
         currentRoom = "roomWithThreeDoors";
         createRoomWithThreeDoors();
-        player.position.set(0, 0.2, 4);
+        player.position.set(0, 0.9, 4);
     } else if (currentRoom === "roomWithThreeDoors" && door.name === "returnDoor") {
         currentRoom = "main";
         createMainRoom();
-        player.position.set(0, 0.2, -4);
+        player.position.set(0, 0.9, -4);
+    } else if (currentRoom === "roomWithThreeDoors" && door.name === "door1") {
+        currentRoom = "cityRoom";
+        createCityRoom();
+        player.position.set(0, 0.9, -24);
+    } else if (currentRoom === "cityRoom" && door.name === "returnToThreeDoors") {
+        currentRoom = "roomWithThreeDoors";
+        createRoomWithThreeDoors();
+        player.position.set(0, 0.9, 4);
     }
 }
 
@@ -170,9 +282,18 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate);
     movePlayer();
+    animateCity();
     renderer.render(scene, camera);
 }
 
-// Inicializa o jogo
+function animateCity() {
+    if (currentRoom === "cityRoom") {
+        cityCars.forEach(car => {
+            car.position.x += (Math.random() - 0.5) * 0.2;
+            car.position.z += (Math.random() - 0.5) * 0.2;
+        });
+    }
+}
+
 init();
 animate();
