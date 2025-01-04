@@ -65,7 +65,31 @@ This project uses the following technologies:
 - **HTML5**: The core structure for the web page and interactive elements.
 - **CSS3**: Used for styling the user interface and ensuring a responsive layout across different screen sizes.
   
+# Resources
 
+This section acknowledges the resources, tutorials, and materials used to help in the development of this project.
+
+## 1. Documentation and Tutorials
+- **Three.js Documentation**: [https://threejs.org/docs/](https://threejs.org/docs/) - The official documentation for Three.js, used for learning how to create and manipulate 3D graphics.
+- **MDN Web Docs - JavaScript**: [https://developer.mozilla.org/en-US/docs/Web/JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) - Mozilla's documentation for JavaScript, a crucial resource for coding logic and functionality.
+- **CSS-Tricks**: [https://css-tricks.com/](https://css-tricks.com/) - A great resource for learning about CSS techniques and responsive design, especially helpful for the styling aspect of the project.
+
+## 2. Tools and Libraries
+- **Three.js**: [https://threejs.org/](https://threejs.org/) - The core library used to create the 3D environment and animations.
+- **Tween.js**: [https://github.com/tweenjs/tween.js/](https://github.com/tweenjs/tween.js/) - A library used for smoothly transitioning properties, helping with animations in the project.
+- **FontAwesome**: [https://fontawesome.com/](https://fontawesome.com/) - Used for incorporating icons in the user interface (e.g., buttons and interactions).
+
+## 3. Youtube Videos 
+- **Three.js Tutorial For Absolute Beginners**: [https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho] (https://www.youtube.com/watch?v=xJAfLdUgdc4&list=PLjcjAqAnHd1EIxV4FSZIiJZvsdrBc1Xho) - Wael Yasmina - This tutorial covers the basics of the 3D library Three.js.
+- **Three.js Animation with Motion Capture**: [https://www.youtube.com/watch?v=Qzy6cQN6aqw](https://www.youtube.com/watch?v=Qzy6cQN6aqw) - Robot Robby talking and explaining about 3D Model and Motion
+- **Creating a SimCity Game with JavaScript & Three.js**: [https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW] (https://www.youtube.com/watch?v=DBX4ReeH6R8&list=PLtzt35QOXmkJ9unmoeA5gXHcscQHJVQpW) - Dan Greenheck -  Creating a SimCity Game with JavaScript & Three.js - playlist of small tutorials
+
+
+## 4. Articles and References
+- **Mental Health Resources**: For inspiration and accurate representation of the mental health diagnoses (Social Anxiety, Depression, and Agoraphobia), various articles, blogs, and expert sources were referenced.
+  - **Social Anxiety**: []
+  - **Depression**: []
+  - **Agoraphobia**: []
 ---
 
 ## 🚀 Installation
