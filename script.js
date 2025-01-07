@@ -33,7 +33,7 @@ function init() {
     player.position.set(0, 0.9, 4); // Ajustar posição inicial
     scene.add(player);
 
-    // Configurando sala inicial
+    // Configuração sala inicial
     createMainRoom();
 
     // Event listeners
@@ -132,7 +132,7 @@ function createMainRoom() {
 function createRoomWithThreeDoors() {
     clearScene();
 
-    // Criando piso
+    // Criação do piso
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10),
         new THREE.MeshStandardMaterial({ color: 0xcccccc })
@@ -140,7 +140,7 @@ function createRoomWithThreeDoors() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // Criando parede traseira
+    // Criação da parede traseira
     const backWall = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 5),
         new THREE.MeshStandardMaterial({ color: 0xffffff })
@@ -148,7 +148,7 @@ function createRoomWithThreeDoors() {
     backWall.position.set(0, 2.5, -5);
     scene.add(backWall);
 
-    // Adicionando 3 portas
+    // Adicionar as 3 portas
     doors = [];
     const colors = [0xff0000, 0x00ff00, 0x0000ff];
     const positions = [-3, 0, 3];
@@ -163,7 +163,7 @@ function createRoomWithThreeDoors() {
         doors.push(door);
     });
 
-    // Adicionando porta de retorno
+    // Adicionar a porta de retorno
     const returnDoor = new THREE.Mesh(
         new THREE.BoxGeometry(2, 4, 0.1),
         new THREE.MeshStandardMaterial({ color: 0x654321 })
@@ -177,7 +177,7 @@ function createRoomWithThreeDoors() {
 function createCityRoom() {
     clearScene();
 
-    // Criando piso
+    // Criação do piso
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(50, 50),
         new THREE.MeshStandardMaterial({ color: 0xaaaaaa })
@@ -185,7 +185,7 @@ function createCityRoom() {
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
 
-    // Criando prédios
+    // Criação dos prédios
     for (let i = 0; i < 30; i++) {
         const building = new THREE.Mesh(
             new THREE.BoxGeometry(1 + Math.random() * 2, 2 + Math.random() * 10, 1 + Math.random() * 2),
@@ -199,7 +199,7 @@ function createCityRoom() {
         scene.add(building);
     }
 
-    // Criando carros em movimento
+    // Criação dos carros em movimento
     cityCars = [];
     for (let i = 0; i < 10; i++) {
         const car = new THREE.Mesh(
@@ -215,7 +215,7 @@ function createCityRoom() {
         scene.add(car);
     }
 
-    // Adicionando porta de retorno
+    // Adicionar a porta de retorno
     const returnDoor = new THREE.Mesh(
         new THREE.BoxGeometry(2, 4, 0.1),
         new THREE.MeshStandardMaterial({ color: 0x654321 })
@@ -232,68 +232,112 @@ function clearScene() {
     );
 }
 
+// Movimentação do jogador
 function movePlayer() {
     const speed = 0.1;
-    if (keys['ArrowUp']) player.position.z -= speed;
-    if (keys['ArrowDown']) player.position.z += speed;
-    if (keys['ArrowLeft']) player.position.x -= speed;
-    if (keys['ArrowRight']) player.position.x += speed;
+    if (keys['ArrowUp']) player.position.z -= speed; // Em frente
+    if (keys['ArrowDown']) player.position.z += speed; // Para trás
+    if (keys['ArrowLeft']) player.position.x -= speed; // Para a esquerda
+    if (keys['ArrowRight']) player.position.x += speed; // Para a direita
 
     checkCollision();
 }
-
 function checkCollision() {
+    // Cria uma caixa delimitadora em torno do jogador
     const playerBox = new THREE.Box3().setFromObject(player);
 
+    // Itera por todas as portas na cena
     for (const door of doors) {
+        // Cria uma caixa delimitadora para a porta
         const doorBox = new THREE.Box3().setFromObject(door);
+
+        // Verifica se as caixas do jogador e da porta estão a colidir
         if (playerBox.intersectsBox(doorBox)) {
+            // Se houver colisão, chama a função para tratar a colisão com a porta
             handleDoorCollision(door);
         }
     }
 }
 
 function handleDoorCollision(door) {
+    // Verifica se o jogador está na sala principal e colidiu com a mainDoor
     if (currentRoom === "main" && door.name === "mainDoor") {
+        // Troca para a sala com três portas
         currentRoom = "roomWithThreeDoors";
         createRoomWithThreeDoors();
+
+        // Move o jogador para uma posição específica na nova sala
         player.position.set(0, 0.9, 4);
+
+    // Verifica se o jogador está na sala com três portas e colidiu com a returnDoor
     } else if (currentRoom === "roomWithThreeDoors" && door.name === "returnDoor") {
+        // Volta para a sala principal 
         currentRoom = "main";
         createMainRoom();
+
+        // Move o jogador para uma posição específica na sala principal
         player.position.set(0, 0.9, -4);
+
+    // Verifica se o jogador está na sala com três portas e colidiu com door1, da Ansiedade que tem a cidade
     } else if (currentRoom === "roomWithThreeDoors" && door.name === "door1") {
+        // Troca para a sala "cityRoom"
         currentRoom = "cityRoom";
         createCityRoom();
+
+        // Move o jogador para uma posição específica na nova sala
         player.position.set(0, 0.9, -24);
+    
+    //!Not working - work in progress
+    // Verifica se o jogador está na "cityRoom" e colidiu com "returnToThreeDoors"
     } else if (currentRoom === "cityRoom" && door.name === "returnToThreeDoors") {
+        // Volta para a sala com três portas
         currentRoom = "roomWithThreeDoors";
         createRoomWithThreeDoors();
+
+        // Move o jogador para uma posição específica na sala com três portas
         player.position.set(0, 0.9, 4);
     }
 }
 
 function onWindowResize() {
+    // Atualiza a proporção da câmera com base no tamanho atual da janela
     camera.aspect = window.innerWidth / window.innerHeight;
+
+    // Atualiza a matriz de projeção da câmera para refletir a nova proporção
     camera.updateProjectionMatrix();
+
+    // Ajusta o tamanho do renderizador para se adequar ao tamanho da janela
     renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 function animate() {
+    // Solicita que o navegador chame essa função novamente no próximo quadro
     requestAnimationFrame(animate);
+
+    // Atualiza a posição do jogador
     movePlayer();
+
+    // Atualiza os carros da cidade
     animateCity();
+
+    // Renderiza a cena a partir da perspectiva da câmera
     renderer.render(scene, camera);
 }
 
 function animateCity() {
+    // Se o jogador estiver na "cityRoom", anima os carros da cidade
     if (currentRoom === "cityRoom") {
         cityCars.forEach(car => {
+            //! Not working in the correct way - WORK IN PROGRESS
+            // Move os carros de forma aleatória no eixo X e Z
             car.position.x += (Math.random() - 0.5) * 0.2;
             car.position.z += (Math.random() - 0.5) * 0.2;
         });
     }
 }
 
+// Inicia o ambiente
 init();
+
+// Inicia a animação
 animate();
