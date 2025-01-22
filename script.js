@@ -188,7 +188,96 @@ function createCity() {
     );
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
-    
+
+    // Adicionar o céu
+    const sky = new THREE.Mesh(
+        new THREE.SphereGeometry(100, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
+    );
+    scene.add(sky);
+
+       // Criar limites da cidade
+       const cityBounds = createCityBounds();
+       scene.add(cityBounds);
+
+    // Criar nuvens
+    const createCloud = () => {
+        const cloud = new THREE.Group();
+        const cloudMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        for (let i = 0; i < 5; i++) {
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(Math.random() * 2 + 1, 16, 16), 
+                cloudMaterial
+            );
+            sphere.position.set(
+                Math.random() * 4 - 2, 
+                Math.random() * 2, 
+                Math.random() * 4 - 2
+            );
+            cloud.add(sphere);
+        }
+        return cloud;
+    };
+
+    for (let i = 0; i < 10; i++) {
+        const cloud = createCloud();
+        cloud.position.set(
+            Math.random() * 100 - 50, // Posição horizontal
+            Math.random() * 30 + 20,  // Altura no céu
+            Math.random() * 100 - 50 // Posição em profundidade
+        );
+        scene.add(cloud);
+    }
+
+    // Criar pássaros
+    const createBird = () => {
+        const birdBodyGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+        const birdBodyMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+        const birdBody = new THREE.Mesh(birdBodyGeometry, birdBodyMaterial);
+
+        const wingGeometry = new THREE.BoxGeometry(1.5, 0.1, 0.5);
+        const wingMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+
+        const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
+        const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
+
+        leftWing.position.set(-0.8, 0, 0);
+        rightWing.position.set(0.8, 0, 0);
+
+        const bird = new THREE.Group();
+        bird.add(birdBody);
+        bird.add(leftWing);
+        bird.add(rightWing);
+
+        return bird;
+    };
+
+    const birds = [];
+    for (let i = 0; i < 5; i++) {
+        const bird = createBird();
+        bird.position.set(
+            Math.random() * 50 - 25,
+            Math.random() * 30 + 20, // Altura dos pássaros
+            Math.random() * 50 - 25
+        );
+        bird.speed = Math.random() * 0.1 + 0.05; // Velocidade de movimento
+        scene.add(bird);
+        birds.push(bird);
+    }
+
+    // Animar os pássaros (bater as asas e voar)
+    function animateBirds() {
+        birds.forEach((bird) => {
+            bird.position.x += bird.speed; // Movimento horizontal
+            if (bird.position.x > 50) bird.position.x = -50; // Loop do movimento
+
+            bird.children[1].rotation.z = Math.sin(Date.now() * 0.005) * 0.5; // Movimento da asa esquerda
+            bird.children[2].rotation.z = -Math.sin(Date.now() * 0.005) * 0.5; // Movimento da asa direita
+        });
+        requestAnimationFrame(animateBirds);
+    }
+
+    animateBirds();
 
     // Criar edifícios variados
     const createBuilding = (width, height, depth, color) => {
@@ -267,6 +356,30 @@ function createCity() {
     }
 }
 
+function createCityBounds() {
+    const bounds = new THREE.Group();
+
+    // Criar paredes invisíveis (caixas) ao redor da cidade
+    const createWall = (width, height, depth, position) => {
+        const geometry = new THREE.BoxGeometry(width, height, depth);
+        const material = new THREE.MeshBasicMaterial({ color: 0x000000, opacity: 0, transparent: true }); // Invisível
+        const wall = new THREE.Mesh(geometry, material);
+        wall.position.set(position.x, position.y, position.z);
+        return wall;
+    };
+
+    // Limites de colisão (simples caixas de proteção)
+    const wallHeight = 10; // Altura das paredes
+
+    // Paredes laterais e fronteira
+    bounds.add(createWall(200, wallHeight, 1, { x: 100, y: wallHeight / 2, z: 0 }));
+    bounds.add(createWall(200, wallHeight, 1, { x: -100, y: wallHeight / 2, z: 0 }));
+    bounds.add(createWall(1, wallHeight, 200, { x: 0, y: wallHeight / 2, z: 100 }));
+    bounds.add(createWall(1, wallHeight, 200, { x: 0, y: wallHeight / 2, z: -100 }));
+
+    return bounds;
+}
+
 
 // Limpar cena
 function clearScene() {
@@ -280,6 +393,7 @@ function movePlayer() {
     const speed = 0.07;
     isWalking = false;
 
+    // Verificar se o jogador está pressionando uma tecla para andar
     if (keys['ArrowUp']) {
         player.position.z -= speed;
         isWalking = true;
@@ -297,11 +411,19 @@ function movePlayer() {
         isWalking = true;
     }
 
-    // Limites na cidade
+    // Verificar limites da cidade
     if (currentRoom === "city") {
         const cityBounds = 90; // Defina os limites da cidade
-        player.position.x = Math.max(-cityBounds, Math.min(cityBounds, player.position.x));
-        player.position.z = Math.max(-cityBounds, Math.min(cityBounds, player.position.z));
+        const maxX = 100;
+        const minX = -100;
+        const maxZ = 100;
+        const minZ = -100;
+
+        // Impedir o movimento do jogador além dos limites da cidade
+        if (player.position.x > maxX) player.position.x = maxX;
+        if (player.position.x < minX) player.position.x = minX;
+        if (player.position.z > maxZ) player.position.z = maxZ;
+        if (player.position.z < minZ) player.position.z = minZ;
     }
 
     if (isWalking) animatePlayer();
