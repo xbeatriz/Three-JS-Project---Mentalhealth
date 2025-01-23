@@ -467,17 +467,66 @@ function handleDoorCollision(door) {
             currentRoom = "city";
             createCity();
             player.position.set(0, 0.9, 4);
-        } else if (door.name === "door2" || door.name === "door3") {
+        } else if (door.name === "door2") {
             roomHistory.push(currentRoom);
-            currentRoom = "main";
-            createMainRoom();
-            player.position.set(0, 0.9, 4);
+            currentRoom = "blackRoomWithBed";
+            createBlackRoomWithBed();
+            player.position.set(0, 0.9, 4); // Ajuste as coordenadas conforme necessário
+        } else if (door.name === "door3") {
+            roomHistory.push(currentRoom);
+            currentRoom = "roomWithCube";
+            createRoomWithCube();
+            player.position.set(0, 0.9, 4); // Ajuste as coordenadas conforme necessário
         }
     } else if (currentRoom === "city") {
         // Não volte automaticamente para outra sala na cidade
         console.log("Colisão com porta na cidade - Nenhuma ação necessária.");
     }
 }
+
+function createBlackRoomWithBed() {
+    clearScene(); // Certifique-se de limpar os objetos da sala anterior
+
+    // Paredes pretas
+    const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const roomGeometry = new THREE.BoxGeometry(10, 5, 10);
+    const room = new THREE.Mesh(roomGeometry, wallsMaterial);
+    room.position.set(0, 2.5, 0);
+    scene.add(room);
+
+    // Cama branca
+    const bedMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const bedGeometry = new THREE.BoxGeometry(2, 0.5, 1);
+    const bed = new THREE.Mesh(bedGeometry, bedMaterial);
+    bed.position.set(0, 0.25, 0); // Ajuste a posição conforme necessário
+    scene.add(bed);
+}
+
+
+function createRoomWithCube() {
+    clearScene(); // Certifique-se de limpar os objetos da sala anterior
+
+    // Paredes brancas
+    const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+    const roomGeometry = new THREE.BoxGeometry(10, 5, 10);
+    const room = new THREE.Mesh(roomGeometry, wallsMaterial);
+    room.position.set(0, 2.5, 0);
+    scene.add(room);
+
+    // Cubo
+    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Cubo vermelho
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.set(0, 0.5, 0); // Ajuste a posição conforme necessário
+    scene.add(cube);
+}
+
+function clearCurrentRoom() {
+    while (scene.children.length > 0) {
+        scene.remove(scene.children[0]);
+    }
+}
+
 
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
