@@ -200,6 +200,7 @@ function createCity() {
         new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
     );
     scene.add(sky);
+    
 
     // Criar limites da cidade
     const cityBounds = createCityBounds();
