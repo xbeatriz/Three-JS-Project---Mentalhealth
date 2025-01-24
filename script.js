@@ -569,13 +569,19 @@ function createBlackRoomWithBed() {
   }
 
 
-  //Criar terceira sala 
+//Criar terceira sala 
 function createRoomWithCube() {
     clearScene();
   // Chão
+  const textureLoader = new THREE.TextureLoader();
+
+  const floorTexture = textureLoader.load("textures/relva.jpg");
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(20,20);
   const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(200, 200), //Tamanho do plano
-    new THREE.MeshStandardMaterial({ color: 0x505050 })
+    new THREE.PlaneGeometry(200, 200), 
+    new THREE.MeshStandardMaterial({ map: floorTexture })
   );
   floor.rotation.x = -Math.PI / 2;
   scene.add(floor);
@@ -625,31 +631,40 @@ function createRoomWithCube() {
   }
 
   // Criar árvores 
-  const createTree = () => {
+  const createPineTree = () => {
     const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
     const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
     const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
 
-    const foliageGeometry = new THREE.SphereGeometry(1.5, 8, 8);
     const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
-    const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
 
-    foliage.position.y = 2.5; // Colocar acima do tronco
-    trunk.add(foliage);
+    const foliageGeometry1 = new THREE.ConeGeometry(1.5, 2, 8);
+    const foliage1 = new THREE.Mesh(foliageGeometry1, foliageMaterial);
+    foliage1.position.y = 2.5; // Colocar acima do tronco
+    trunk.add(foliage1);
+
+    const foliageGeometry2 = new THREE.ConeGeometry(1.2, 2, 8);
+    const foliage2 = new THREE.Mesh(foliageGeometry2, foliageMaterial);
+    foliage2.position.y = 4; // Colocar acima da primeira camada de folhagem
+    trunk.add(foliage2);
+
+    const foliageGeometry3 = new THREE.ConeGeometry(0.9, 2, 8);
+    const foliage3 = new THREE.Mesh(foliageGeometry3, foliageMaterial);
+    foliage3.position.y = 5.5; // Colocar acima da segunda camada de folhagem
+    trunk.add(foliage3);
 
     return trunk;
-  };
+};
 
-  for (let i = 0; i < 10; i++) {
-    const tree = createTree();
+for (let i = 0; i < 10; i++) {
+    const tree = createPineTree();
     tree.position.set(
-      Math.random() * 50 - 25,
-      1.5, // Base do tronco na altura certa
-      Math.random() * 50 - 25
+        Math.random() * 50 - 25,
+        1.5, // Base do tronco na altura certa
+        Math.random() * 50 - 25
     );
     scene.add(tree);
-  }
-
+}
   // Criar postes de luz
   const createLampPost = () => {
     const postGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5, 12);
@@ -678,14 +693,67 @@ function createRoomWithCube() {
     );
     scene.add(lampPost);
   }
+
+  // Criar aviões
+  const createPlane = () => {
+    const bodyGeometry = new THREE.BoxGeometry(2, 0.5, 0.5);
+    const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+
+    const wingGeometry = new THREE.BoxGeometry(1, 0.1, 3);
+    const wingMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+    const wing = new THREE.Mesh(wingGeometry, wingMaterial);
+    wing.position.y = 0.2;
+    body.add(wing);
+
+    const tailGeometry = new THREE.BoxGeometry(0.5, 0.1, 1);
+    const tailMaterial = new THREE.MeshStandardMaterial({ color: 0x0000ff });
+    const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+    tail.position.set(0, 0.2, -1);
+    body.add(tail);
+
+    return body;
+  };
+
+  const planes = [];
+  for (let i = 0; i < 15; i++) { // número de aviões
+    const plane = createPlane();
+    plane.position.set(
+      Math.random() * 50 - 25,
+      Math.random() * 20 + 10, // Altura
+      Math.random() * 50 - 25
+    );
+    plane.velocity = new THREE.Vector3(Math.random() * 0.1 - 0.05, 0, Math.random() * 0.1 - 0.05);
+    scene.add(plane);
+    planes.push(plane);
+  }
+
+  // Função de animação para os aviões
+  const animatePlanes = () => {
+    requestAnimationFrame(animatePlanes);
+
+    planes.forEach(plane => {
+      plane.position.add(plane.velocity);
+      if (plane.position.x > 50 || plane.position.x < -50) plane.velocity.x *= -1;
+      if (plane.position.z > 50 || plane.position.z < -50) plane.velocity.z *= -1;
+    });
+
+    renderer.render(scene, camera);
+  };
+
+  animatePlanes();
+
 }
+
+
+
 
 
 // Criar limites da cidade
 function createCityBounds() {
   const bounds = new THREE.Group();
 
-  // Criar paredes invisíveis (caixas) ao redor da cidade
+    // Criar paredes invisíveis (caixas) ao redor da cidade
   const createWall = (width, height, depth, position) => {
     const geometry = new THREE.BoxGeometry(width, height, depth);
     const material = new THREE.MeshBasicMaterial({

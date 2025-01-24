@@ -1,0 +1,9 @@
+O boneco tem como movimentos:
+- as setas para andar para a frente e para trás;
+- a câmara segue o andar do boneco
+- com a tecla espaço: o boneco dá um salto
+
+interação: 
+- entrar na primeira porta 
+- em cada seguinte das 3 portas tem uma cidade diferente
+- para voltar à sala anterior pressionar a tecla "p"
