@@ -103,8 +103,13 @@ function createPlayerModel() {
   // Ajustar escala do boneco
   body.scale.set(0.5, 0.5, 0.5); // Reduz o tamanho para 50%
 
+  // Adicionar bounding box
+  const boundingBox = new THREE.Box3().setFromObject(body);
+  body.boundingBox = boundingBox;
+
   return body;
 }
+
 
 // Criar sala principal
 function createMainRoom() {
@@ -322,106 +327,231 @@ function createCity() {
 
 // Criar a sala com cama (depression room)
 function createBlackRoomWithBed() {
-  clearScene();
-
-  // Piso da cidade
-  const floor = new THREE.Mesh(
-    new THREE.PlaneGeometry(200, 200), //Tamanho do plano
-    new THREE.MeshStandardMaterial({ color: 0x505050 })
-  );
-  floor.rotation.x = -Math.PI / 2;
-  scene.add(floor);
-
-  // Adicionar o céu
-  const sky = new THREE.Mesh(
-    new THREE.SphereGeometry(100, 32, 32),
-    new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
-  );
-  scene.add(sky);
-
-  // Criar limites da cidade
-  const cityBounds = createCityBounds();
-  scene.add(cityBounds);
-
-  // Criar edifícios variados
-  const createBuilding = (width, height, depth, color) => {
-    const geometry = new THREE.BoxGeometry(width, height, depth);
-    const material = new THREE.MeshStandardMaterial({ color });
-    const building = new THREE.Mesh(geometry, material);
-    building.castShadow = true;
-    return building;
-  };
-
-  for (let i = 0; i < 15; i++) {
-    const width = Math.random() * 3 + 2; // Largura entre 2 e 5
-    const height = Math.random() * 15 + 5; // Altura entre 5 e 20
-    const depth = Math.random() * 3 + 2; // Profundidade entre 2 e 5
-    const color = Math.random() * 0xffffff;
-
-    const building = createBuilding(width, height, depth, color);
-    building.position.set(
-      Math.random() * 50 - 25,
-      height / 2, // Ajusta posição vertical
-      Math.random() * 50 - 25
+    clearScene();
+  
+    const objects = [];
+  
+    const checkCollision = (obj, buffer = 1) => {
+      const objBox = new THREE.Box3().setFromObject(obj);
+      for (let i = 0; i < objects.length; i++) {
+        const other = objects[i];
+        if (obj !== other) {
+          const otherBox = new THREE.Box3().setFromObject(other);
+          if (objBox.intersectsBox(otherBox)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    };
+  
+    const placeObject = (obj, buffer = 1) => {
+      let attempts = 0;
+      do {
+        obj.position.set(Math.random() * 50 - 25, obj.position.y, Math.random() * 50 - 25);
+        attempts++;
+      } while (checkCollision(obj, buffer) && attempts < 100);
+      objects.push(obj);
+      scene.add(obj);
+    };
+  
+    // Piso da cidade
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(200, 200), //Tamanho do plano
+      new THREE.MeshStandardMaterial({ color: 0x505050 })
     );
-    scene.add(building);
-  }
-
-  // Criar árvores variadas
-  const createTree = () => {
-    const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
-    const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
-    const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-
-    const foliageGeometry = new THREE.SphereGeometry(1.5, 8, 8);
-    const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
-    const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
-
-    foliage.position.y = 2.5; // Colocar acima do tronco
-    trunk.add(foliage);
-
-    return trunk;
-  };
-
-  for (let i = 0; i < 10; i++) {
-    const tree = createTree();
-    tree.position.set(
-      Math.random() * 50 - 25,
-      1.5, // Base do tronco na altura certa
-      Math.random() * 50 - 25
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+  
+    // Adicionar o céu
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(100, 32, 32),
+      new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
     );
-    scene.add(tree);
+    scene.add(sky);
+  
+    // Criar limites da cidade
+    const cityBounds = createCityBounds();
+    scene.add(cityBounds);
+  
+    // Criar edifícios variados
+    const createBuilding = (width, height, depth, color) => {
+      const geometry = new THREE.BoxGeometry(width, height, depth);
+      const material = new THREE.MeshStandardMaterial({ color });
+      const building = new THREE.Mesh(geometry, material);
+      building.castShadow = true;
+      return building;
+    };
+  
+    for (let i = 0; i < 15; i++) {
+      const width = Math.random() * 3 + 2; // Largura entre 2 e 5
+      const height = Math.random() * 15 + 5; // Altura entre 5 e 20
+      const depth = Math.random() * 3 + 2; // Profundidade entre 2 e 5
+      const color = Math.random() * 0xffffff;
+  
+      const building = createBuilding(width, height, depth, color);
+      building.position.set(0, height / 2, 0); // Ajusta posição vertical
+      placeObject(building, 5);
+    }
+  
+    // Criar árvores variadas
+    const createTree = () => {
+      const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
+      const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+      const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+  
+      const foliageGeometry = new THREE.SphereGeometry(1.5, 8, 8);
+      const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+      const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+  
+      foliage.position.y = 2.5; // Colocar acima do tronco
+      trunk.add(foliage);
+  
+      return trunk;
+    };
+  
+    for (let i = 0; i < 10; i++) {
+      const tree = createTree();
+      tree.position.set(0, 1.5, 0); // Base do tronco na altura certa
+      placeObject(tree, 3);
+    }
+  
+    // Criar postes de luz
+    const createLampPost = () => {
+      const postGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5, 12);
+      const postMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+      const post = new THREE.Mesh(postGeometry, postMaterial);
+  
+      const lightGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+      const lightMaterial = new THREE.MeshStandardMaterial({
+        color: 0xffffaa,
+        emissive: 0xffffaa,
+      });
+      const light = new THREE.Mesh(lightGeometry, lightMaterial);
+  
+      light.position.y = 2.5; // Colocar a luz no topo do poste
+      post.add(light);
+  
+      return post;
+    };
+  
+    for (let i = 0; i < 8; i++) {
+      const lampPost = createLampPost();
+      lampPost.position.set(0, 2.5, 0); // Base na altura do chão
+      placeObject(lampPost, 3);
+    }
+  
+    // Criar um carro
+    const createCar = () => {
+      const carBodyGeometry = new THREE.BoxGeometry(4, 1.5, 2);
+      const carBodyMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      const carBody = new THREE.Mesh(carBodyGeometry, carBodyMaterial);
+  
+      const carWheelGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.5, 12);
+      const carWheelMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+  
+      const createWheel = () => {
+        const wheel = new THREE.Mesh(carWheelGeometry, carWheelMaterial);
+        wheel.rotation.z = Math.PI / 2;
+        return wheel;
+      };
+  
+      const wheelPositions = [
+        [-1.5, -0.75, 1],
+        [1.5, -0.75, 1],
+        [-1.5, -0.75, -1],
+        [1.5, -0.75, -1],
+      ];
+  
+      wheelPositions.forEach(position => {
+        const wheel = createWheel();
+        wheel.position.set(...position);
+        carBody.add(wheel);
+      });
+  
+      return carBody;
+    };
+  
+    const cars = [];
+    for (let i = 0; i < 5; i++) {
+      const car = createCar();
+      car.position.set(0, 0.75, 0);
+      car.velocity = new THREE.Vector3(Math.random() * 0.1 - 0.05, 0, Math.random() * 0.1 - 0.05);
+      placeObject(car, 4);
+      cars.push(car);
+    }
+  
+    // Criar um animal
+    const createAnimal = () => {
+      const bodyGeometry = new THREE.BoxGeometry(1, 0.5, 2);
+      const bodyMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+      const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  
+      const headGeometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+      const headMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+      const head = new THREE.Mesh(headGeometry, headMaterial);
+      head.position.set(0, 0.25, 1.25);
+      body.add(head);
+  
+      const legGeometry = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 12);
+      const legMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+  
+      const createLeg = () => {
+        const leg = new THREE.Mesh(legGeometry, legMaterial);
+        leg.rotation.z = Math.PI / 2;
+        return leg;
+      };
+  
+      const legPositions = [
+        [-0.4, -0.25, 0.75],
+        [0.4, -0.25, 0.75],
+        [-0.4, -0.25, -0.75],
+        [0.4, -0.25, -0.75],
+      ];
+  
+      legPositions.forEach(position => {
+        const leg = createLeg();
+        leg.position.set(...position);
+        body.add(leg);
+      });
+  
+      return body;
+    };
+  
+    const animals = [];
+    for (let i = 0; i < 5; i++) {
+      const animal = createAnimal();
+      animal.position.set(0, 0.25, 0);
+      animal.velocity = new THREE.Vector3(Math.random() * 0.05 - 0.025, 0, Math.random() * 0.05 - 0.025);
+      placeObject(animal, 2);
+      animals.push(animal);
+    }
+  
+    // Função de animação para mover os carros e animais
+    const animate = () => {
+      requestAnimationFrame(animate);
+  
+      cars.forEach(car => {
+        car.position.add(car.velocity);
+        if (checkCollision(car, 4)) {
+          car.position.sub(car.velocity);
+          car.velocity.negate();
+        }
+      });
+  
+      animals.forEach(animal => {
+        animal.position.add(animal.velocity);
+        if (checkCollision(animal, 2)) {
+          animal.position.sub(animal.velocity);
+          animal.velocity.negate();
+        }
+      });
+  
+      renderer.render(scene, camera);
+    };
+  
+    animate();
   }
-
-  // Criar postes de luz
-  const createLampPost = () => {
-    const postGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5, 12);
-    const postMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
-    const post = new THREE.Mesh(postGeometry, postMaterial);
-
-    const lightGeometry = new THREE.SphereGeometry(0.5, 8, 8);
-    const lightMaterial = new THREE.MeshStandardMaterial({
-      color: 0xffffaa,
-      emissive: 0xffffaa,
-    });
-    const light = new THREE.Mesh(lightGeometry, lightMaterial);
-
-    light.position.y = 2.5; // Colocar a luz no topo do poste
-    post.add(light);
-
-    return post;
-  };
-
-  for (let i = 0; i < 8; i++) {
-    const lampPost = createLampPost();
-    lampPost.position.set(
-      Math.random() * 50 - 25,
-      2.5, // Base na altura do chão
-      Math.random() * 50 - 25
-    );
-    scene.add(lampPost);
-  }
-}
 
 function createRoomWithCube() {
     clearScene();
