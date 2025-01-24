@@ -112,10 +112,9 @@ function createMainRoom() {
     clearScene();
 
     const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 10),
+        new THREE.PlaneGeometry(60, 60),
         new THREE.MeshStandardMaterial({ color: 0xcccccc, side: THREE.DoubleSide }) // Ambos os lados visíveis
     );
-    
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
     floor.position.y = 0; // Ajusta o nível do chão
@@ -126,6 +125,8 @@ function createMainRoom() {
     );
     backWall.position.set(0, 2.5, -5);
     scene.add(backWall);
+
+    
 
     const door = new THREE.Mesh(
         new THREE.BoxGeometry(2, 4, 0.1),
@@ -154,6 +155,7 @@ function createRoomWithThreeDoors() {
     );
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
+    floor.position.y = 0;
 
     const backWall = new THREE.Mesh(
         new THREE.PlaneGeometry(60, 60),
@@ -161,6 +163,8 @@ function createRoomWithThreeDoors() {
     );
     backWall.position.set(0, 2.5, -5);
     scene.add(backWall);
+
+    
 
     doors = [];
     const doorColors = [0xff0000, 0x00ff00, 0x0000ff];
@@ -380,7 +384,7 @@ function createBlackRoomWithBed() {
 
 
 function createRoomWithCube() {
-    clearScene();
+    
        // Piso da cidade
     const floor = new THREE.Mesh(
         new THREE.PlaneGeometry(200, 200), //Tamanho do plano
@@ -581,23 +585,23 @@ function handleDoorCollision(door) {
         roomHistory.push(currentRoom);
         currentRoom = "roomWithThreeDoors";
         createRoomWithThreeDoors();
-        player.position.set(0, 0.9, 4); //Coordenadas
+        player.position.set(0, 2.5, 4); //Coordenadas
     } else if (currentRoom === "roomWithThreeDoors") {
         if (door.name === "door1") {
             roomHistory.push(currentRoom);
             currentRoom = "city";
             createCity();
-            player.position.set(0, 0.9, 4); //Coordenadas
+            player.position.set(0, 2.5, 4); //Coordenadas
         } else if (door.name === "door2") {
             roomHistory.push(currentRoom);
             currentRoom = "blackRoomWithBed";
             createBlackRoomWithBed();
-            player.position.set(0, 0.9, 4); // Coordenadas
+            player.position.set(0, 2.5, 4); // Coordenadas
         } else if (door.name === "door3") {
             roomHistory.push(currentRoom);
             currentRoom = "roomWithCube";
             createRoomWithCube();
-            player.position.set(0, 0.9, 4); // Coordenadas
+            player.position.set(0, 2.5, 4); // Coordenadas
         }
     } else if (currentRoom === "city") {
         // Não volta automaticamente para outra sala na cidade
