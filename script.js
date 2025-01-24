@@ -6,7 +6,7 @@ let scene, camera, renderer, player;
 let currentRoom = "main";
 let doors = [];
 const keys = {};
-let isWalking = false; // Controle de animação de caminhada
+let isWalking = false; // Controleo de animação de caminhada
 let roomHistory = []; // Histórico de salas
 
 
@@ -118,7 +118,7 @@ function createMainRoom() {
     
     floor.rotation.x = -Math.PI / 2;
     scene.add(floor);
-    floor.position.y = 0; // Ajuste o nível do chão
+    floor.position.y = 0; // Ajusta o nível do chão
 
     const backWall = new THREE.Mesh(
         new THREE.PlaneGeometry(60, 60),
@@ -137,13 +137,14 @@ function createMainRoom() {
     doors = [door];
 }
 
+//Camara segue o jogador
 function updateCameraPosition() {
     camera.position.set(player.position.x, player.position.y + 3, player.position.z + 5); // Segue o jogador
     camera.lookAt(player.position.x, player.position.y + 1, player.position.z); // Mantém o foco no jogador
 }
 
 
-// Criar sala com três portas
+// Criar a sala com três portas
 function createRoomWithThreeDoors() {
     clearScene();
 
@@ -183,7 +184,7 @@ function createCity() {
 
     // Piso da cidade
     const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(200, 200), // Aumente o tamanho do plano
+        new THREE.PlaneGeometry(200, 200), //Tamanho do plano
         new THREE.MeshStandardMaterial({ color: 0x505050 })
     );
     floor.rotation.x = -Math.PI / 2;
@@ -196,88 +197,9 @@ function createCity() {
     );
     scene.add(sky);
 
-       // Criar limites da cidade
-       const cityBounds = createCityBounds();
-       scene.add(cityBounds);
-
-    // Criar nuvens
-    const createCloud = () => {
-        const cloud = new THREE.Group();
-        const cloudMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        for (let i = 0; i < 5; i++) {
-            const sphere = new THREE.Mesh(
-                new THREE.SphereGeometry(Math.random() * 2 + 1, 16, 16), 
-                cloudMaterial
-            );
-            sphere.position.set(
-                Math.random() * 4 - 2, 
-                Math.random() * 2, 
-                Math.random() * 4 - 2
-            );
-            cloud.add(sphere);
-        }
-        return cloud;
-    };
-
-    for (let i = 0; i < 10; i++) {
-        const cloud = createCloud();
-        cloud.position.set(
-            Math.random() * 100 - 50, // Posição horizontal
-            Math.random() * 30 + 20,  // Altura no céu
-            Math.random() * 100 - 50 // Posição em profundidade
-        );
-        scene.add(cloud);
-    }
-
-    // Criar pássaros
-    const createBird = () => {
-        const birdBodyGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-        const birdBodyMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-        const birdBody = new THREE.Mesh(birdBodyGeometry, birdBodyMaterial);
-
-        const wingGeometry = new THREE.BoxGeometry(1.5, 0.1, 0.5);
-        const wingMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-
-        const leftWing = new THREE.Mesh(wingGeometry, wingMaterial);
-        const rightWing = new THREE.Mesh(wingGeometry, wingMaterial);
-
-        leftWing.position.set(-0.8, 0, 0);
-        rightWing.position.set(0.8, 0, 0);
-
-        const bird = new THREE.Group();
-        bird.add(birdBody);
-        bird.add(leftWing);
-        bird.add(rightWing);
-
-        return bird;
-    };
-
-    const birds = [];
-    for (let i = 0; i < 5; i++) {
-        const bird = createBird();
-        bird.position.set(
-            Math.random() * 50 - 25,
-            Math.random() * 30 + 20, // Altura dos pássaros
-            Math.random() * 50 - 25
-        );
-        bird.speed = Math.random() * 0.1 + 0.05; // Velocidade de movimento
-        scene.add(bird);
-        birds.push(bird);
-    }
-
-    // Animar os pássaros (bater as asas e voar)
-    function animateBirds() {
-        birds.forEach((bird) => {
-            bird.position.x += bird.speed; // Movimento horizontal
-            if (bird.position.x > 50) bird.position.x = -50; // Loop do movimento
-
-            bird.children[1].rotation.z = Math.sin(Date.now() * 0.005) * 0.5; // Movimento da asa esquerda
-            bird.children[2].rotation.z = -Math.sin(Date.now() * 0.005) * 0.5; // Movimento da asa direita
-        });
-        requestAnimationFrame(animateBirds);
-    }
-
-    animateBirds();
+    // Criar limites da cidade
+    const cityBounds = createCityBounds();
+    scene.add(cityBounds);
 
     // Criar edifícios variados
     const createBuilding = (width, height, depth, color) => {
@@ -297,7 +219,7 @@ function createCity() {
         const building = createBuilding(width, height, depth, color);
         building.position.set(
             Math.random() * 50 - 25,
-            height / 2, // Ajustar posição vertical
+            height / 2, // Ajusta posição vertical
             Math.random() * 50 - 25
         );
         scene.add(building);
@@ -393,7 +315,7 @@ function movePlayer() {
     const speed = 0.07;
     isWalking = false;
 
-    // Verificar se o jogador está pressionando uma tecla para andar
+    // Verificar se o jogador está a usar as teclas
     if (keys['ArrowUp']) {
         player.position.z -= speed;
         isWalking = true;
@@ -441,11 +363,11 @@ function animatePlayer() {
     player.rightLegPivot.rotation.x = Math.sin(Date.now() * walkSpeed) * amplitude;
 }
 
-// Checar colisão com portas
+// Check colisão com portas
 function checkCollision() {
     const playerBox = new THREE.Box3().setFromObject(player);
 
-    for (const door of doors) { // Certifique-se de verificar somente as portas
+    for (const door of doors) { // Certifica de verificar somente as portas
         const doorBox = new THREE.Box3().setFromObject(door);
         if (playerBox.intersectsBox(doorBox)) {
             handleDoorCollision(door);
@@ -460,32 +382,32 @@ function handleDoorCollision(door) {
         roomHistory.push(currentRoom);
         currentRoom = "roomWithThreeDoors";
         createRoomWithThreeDoors();
-        player.position.set(0, 0.9, 4);
+        player.position.set(0, 0.9, 4); //Coordenadas
     } else if (currentRoom === "roomWithThreeDoors") {
         if (door.name === "door1") {
             roomHistory.push(currentRoom);
             currentRoom = "city";
             createCity();
-            player.position.set(0, 0.9, 4);
+            player.position.set(0, 0.9, 4); //Coordenadas
         } else if (door.name === "door2") {
             roomHistory.push(currentRoom);
             currentRoom = "blackRoomWithBed";
             createBlackRoomWithBed();
-            player.position.set(0, 0.9, 4); // Ajuste as coordenadas conforme necessário
+            player.position.set(0, 0.9, 4); // Coordenadas
         } else if (door.name === "door3") {
             roomHistory.push(currentRoom);
             currentRoom = "roomWithCube";
             createRoomWithCube();
-            player.position.set(0, 0.9, 4); // Ajuste as coordenadas conforme necessário
+            player.position.set(0, 0.9, 4); // Coordenadas
         }
     } else if (currentRoom === "city") {
-        // Não volte automaticamente para outra sala na cidade
+        // Não volta automaticamente para outra sala na cidade
         console.log("Colisão com porta na cidade - Nenhuma ação necessária.");
     }
 }
 
 function createBlackRoomWithBed() {
-    clearScene(); // Certifique-se de limpar os objetos da sala anterior
+    clearScene(); // Limpa os objetos da sala anterior
 
     // Paredes pretas
     const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
@@ -498,13 +420,13 @@ function createBlackRoomWithBed() {
     const bedMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const bedGeometry = new THREE.BoxGeometry(2, 0.5, 1);
     const bed = new THREE.Mesh(bedGeometry, bedMaterial);
-    bed.position.set(0, 0.25, 0); // Ajuste a posição conforme necessário
+    bed.position.set(0, 0.25, 0); // Ajustar a posição conforme necessário
     scene.add(bed);
 }
 
 
 function createRoomWithCube() {
-    clearScene(); // Certifique-se de limpar os objetos da sala anterior
+    clearScene(); //limpa os objetos da sala anterior
 
     // Paredes brancas
     const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -517,7 +439,7 @@ function createRoomWithCube() {
     const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Cubo vermelho
     const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
     const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.set(0, 0.5, 0); // Ajuste a posição conforme necessário
+    cube.position.set(0, 0.5, 0); // Ajustar a posição conforme necessário
     scene.add(cube);
 }
 
@@ -547,7 +469,7 @@ function goToPreviousRoom() {
             createCity();
         }
         currentRoom = previousRoom;
-        player.position.set(0, 0.9, 4); // Resetar posição do jogador
+        player.position.set(0, 0.9, 4); // Reseta a posição do jogador
     }
 }
 
