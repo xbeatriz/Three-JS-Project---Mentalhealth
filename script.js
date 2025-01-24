@@ -405,16 +405,55 @@ function handleDoorCollision(door) {
         console.log("Colisão com porta na cidade - Nenhuma ação necessária.");
     }
 }
-
+// Criar a sala com cama (depression room)
 function createBlackRoomWithBed() {
     clearScene(); // Limpa os objetos da sala anterior
 
+    // Piso
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 60),
+        new THREE.MeshStandardMaterial({ color: 0xcccccc })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
     // Paredes pretas
-    const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
-    const roomGeometry = new THREE.BoxGeometry(10, 5, 10);
-    const room = new THREE.Mesh(roomGeometry, wallsMaterial);
-    room.position.set(0, 2.5, 0);
-    scene.add(room);
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    
+    // Parede de trás
+    const backWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    backWall.position.set(0, 10, -30);
+    scene.add(backWall);
+
+    // Parede da direita
+    const rightWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(30, 10, 0);
+    scene.add(rightWall);
+
+    // Parede da esquerda
+    const leftWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-30, 10, 0);
+    scene.add(leftWall);
+
+    // Teto
+    const ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 60),
+        wallMaterial
+    );
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.set(0, 20, 0);
+    scene.add(ceiling);
 
     // Cama branca
     const bedMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
@@ -426,14 +465,53 @@ function createBlackRoomWithBed() {
 
 
 function createRoomWithCube() {
-    clearScene(); //limpa os objetos da sala anterior
+       clearScene(); // Limpa os objetos da sala anterior
 
-    // Paredes brancas
-    const wallsMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const roomGeometry = new THREE.BoxGeometry(10, 5, 10);
-    const room = new THREE.Mesh(roomGeometry, wallsMaterial);
-    room.position.set(0, 2.5, 0);
-    scene.add(room);
+    // Piso
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 60),
+        new THREE.MeshStandardMaterial({ color: 0xcccccc })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // Paredes pretas
+    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
+    
+    // Parede de trás
+    const backWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    backWall.position.set(0, 10, -30);
+    scene.add(backWall);
+
+    // Parede da direita
+    const rightWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    rightWall.rotation.y = -Math.PI / 2;
+    rightWall.position.set(30, 10, 0);
+    scene.add(rightWall);
+
+    // Parede da esquerda
+    const leftWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 20),
+        wallMaterial
+    );
+    leftWall.rotation.y = Math.PI / 2;
+    leftWall.position.set(-30, 10, 0);
+    scene.add(leftWall);
+
+    // Teto
+    const ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(60, 60),
+        wallMaterial
+    );
+    ceiling.rotation.x = Math.PI / 2;
+    ceiling.position.set(0, 20, 0);
+    scene.add(ceiling);
 
     // Cubo
     const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Cubo vermelho
