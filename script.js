@@ -6,16 +6,16 @@ let scene, camera, renderer, player;
 let currentRoom = "main";
 let doors = [];
 const keys = {};
-let isWalking = false; // Controleo de animação de caminhada
+let isWalking = false; // Controlo da animação da caminhada
 let roomHistory = []; // Histórico de salas
 
-// Configuração inicial
+//------------------------ Configuração inicial da cena ------------------------
 function init() {
   // Cena
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf0f0f0);
 
-  // Câmera
+  // Câmara
   camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -35,7 +35,7 @@ function init() {
   light.position.set(5, 10, 7);
   scene.add(light);
 
-  // Criar jogador
+  // Criação do jogador
   player = createPlayerModel();
   player.position.set(0, 2.9, 4); // Levantar o jogador acima do chão
   scene.add(player);
@@ -51,7 +51,20 @@ function init() {
   animate();
 }
 
-// Criação do modelo do jogador
+// Atualizar a posição da câmara para seguir o jogador
+function updateCameraPosition() {
+    camera.position.set(
+      player.position.x,
+      player.position.y + 3,
+      player.position.z + 5
+    ); 
+    camera.lookAt(player.position.x, player.position.y + 1, player.position.z); // Mantém o foco no jogador
+  }
+
+
+//
+//
+//------------ Criação do modelo do jogador ------------------
 function createPlayerModel() {
   const createLimb = (width, height, depth, color = 0x00ff00) => {
     const geometry = new THREE.BoxGeometry(width, height, depth);
@@ -100,7 +113,7 @@ function createPlayerModel() {
   body.leftLegPivot = leftLegPivot;
   body.rightLegPivot = rightLegPivot;
 
-  // Ajustar escala do boneco
+  // Ajustar a escala do boneco
   body.scale.set(0.5, 0.5, 0.5); // Reduz o tamanho para 50%
 
   // Adicionar bounding box
@@ -110,6 +123,11 @@ function createPlayerModel() {
   return body;
 }
 
+
+
+// 
+//------------------- Criação das salas -------------------
+//
 
 // Criar sala principal
 function createMainRoom() {
@@ -153,15 +171,7 @@ function createMainRoom() {
   doors = [door];
 }
 
-//Camara segue o jogador
-function updateCameraPosition() {
-  camera.position.set(
-    player.position.x,
-    player.position.y + 3,
-    player.position.z + 5
-  ); // Segue o jogador
-  camera.lookAt(player.position.x, player.position.y + 1, player.position.z); // Mantém o foco no jogador
-}
+
 
 // Criar a sala com três portas
 function createRoomWithThreeDoors() {
@@ -211,13 +221,18 @@ function createRoomWithThreeDoors() {
   }
 }
 
-// Criar cidade
+
+//
+//---------------------- AS TRÊS SALAS ----------------------
+//
+
+// Criar cidade - SALA 1
 function createCity() {
   clearScene();
 
   const textureLoader = new THREE.TextureLoader();
 
-  // Piso da cidade
+  // Chão da cidade
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 200), //Tamanho do plano
     new THREE.MeshStandardMaterial({ color: 0x505050 })
@@ -240,7 +255,7 @@ function createCity() {
   const cityBounds = createCityBounds();
   scene.add(cityBounds);
 
-  // Criar edifícios variados
+  // Criar edifícios
   const createBuilding = (width, height, depth, color) => {
     const geometry = new THREE.BoxGeometry(width, height, depth);
     const material = new THREE.MeshStandardMaterial({ color });
@@ -264,7 +279,7 @@ function createCity() {
     scene.add(building);
   }
 
-  // Criar árvores variadas
+  // Criar árvores 
   const createTree = () => {
     const texLoader = new THREE.TextureLoader();
     const woodTexture = texLoader.load("textures/wood.jpg");
@@ -325,7 +340,7 @@ function createCity() {
   }
 }
 
-// Criar a sala com cama (depression room)
+// Criar segundo quarto
 function createBlackRoomWithBed() {
     clearScene();
   
@@ -355,7 +370,7 @@ function createBlackRoomWithBed() {
       scene.add(obj);
     };
   
-    // Piso da cidade
+    // Chão da cidade
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(200, 200), //Tamanho do plano
       new THREE.MeshStandardMaterial({ color: 0x505050 })
@@ -366,7 +381,7 @@ function createBlackRoomWithBed() {
     // Adicionar o céu
     const sky = new THREE.Mesh(
       new THREE.SphereGeometry(100, 32, 32),
-      new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
+      new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) 
     );
     scene.add(sky);
   
@@ -394,7 +409,7 @@ function createBlackRoomWithBed() {
       placeObject(building, 5);
     }
   
-    // Criar árvores variadas
+    // Criar árvores 
     const createTree = () => {
       const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
       const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
@@ -553,9 +568,11 @@ function createBlackRoomWithBed() {
     animate();
   }
 
+
+  //Criar terceira sala 
 function createRoomWithCube() {
     clearScene();
-  // Piso da cidade
+  // Chão
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(200, 200), //Tamanho do plano
     new THREE.MeshStandardMaterial({ color: 0x505050 })
@@ -566,7 +583,7 @@ function createRoomWithCube() {
   // Adicionar o céu
   const sky = new THREE.Mesh(
     new THREE.SphereGeometry(100, 32, 32),
-    new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
+    new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) 
   );
   scene.add(sky);
 
@@ -583,7 +600,7 @@ function createRoomWithCube() {
   const cityBounds = createCityBounds();
   scene.add(cityBounds);
 
-  // Criar edifícios variados
+  // Criar edifícios 
   const createBuilding = (width, height, depth, color) => {
     const geometry = new THREE.BoxGeometry(width, height, depth);
     const material = new THREE.MeshStandardMaterial({ color });
@@ -607,7 +624,7 @@ function createRoomWithCube() {
     scene.add(building);
   }
 
-  // Criar árvores variadas
+  // Criar árvores 
   const createTree = () => {
     const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
     const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
@@ -663,6 +680,8 @@ function createRoomWithCube() {
   }
 }
 
+
+// Criar limites da cidade
 function createCityBounds() {
   const bounds = new THREE.Group();
 
@@ -679,7 +698,7 @@ function createCityBounds() {
     return wall;
   };
 
-  // Limites de colisão (simples caixas de proteção)
+  // Limites de colisão 
   const wallHeight = 10; // Altura das paredes
 
   // Paredes laterais e fronteira
@@ -710,9 +729,9 @@ function clearScene() {
 function movePlayer() {
     player.velocityY = 0;
     const speed = 0.07;
-    const jumpHeight = 2.0; // Altura do salto
-    const gravity = 0.05; // Gravidade para o jogador
-    const groundLevel = 2.5; // Nível do chão
+    const jumpHeight = 2.0; 
+    const gravity = 0.05; 
+    const groundLevel = 2.5; 
     isWalking = false;
   
     // Verificar se o jogador está a usar as teclas
@@ -746,8 +765,8 @@ function movePlayer() {
       player.position.y += player.velocityY; // Atualizar posição do jogador
   
       if (player.position.y < groundLevel) {
-        player.position.y = groundLevel; // Garantir que o jogador não passe do chão
-        player.velocityY = 0; // Resetar velocidade ao tocar o chão
+        player.position.y = groundLevel; // Garantir que o jogador não passa do chão
+        player.velocityY = 0; // Normalizar velocidade ao tocar o chão
       }
     }
   
@@ -784,6 +803,8 @@ function animatePlayer() {
     Math.sin(Date.now() * walkSpeed) * amplitude;
 }
 
+
+//------------ Colisão com portas ----------------
 // Check colisão com portas
 function checkCollision() {
   const playerBox = new THREE.Box3().setFromObject(player);
@@ -827,7 +848,9 @@ function handleDoorCollision(door) {
   }
 }
 
-//Go back to previous room with key "p"
+
+
+//VOLTAR PARA O QUARTO ANTERIOR COM TECLA"p"
 document.addEventListener("keydown", (e) => {
   keys[e.key] = true;
 
@@ -837,7 +860,9 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-//Function to go back to previous room
+
+
+//Função para ir para o quarto anterior
 function goToPreviousRoom() {
   if (roomHistory.length > 0) {
     const previousRoom = roomHistory.pop(); // Retira a última sala do histórico
@@ -849,7 +874,7 @@ function goToPreviousRoom() {
       createCity();
     }
     currentRoom = previousRoom;
-    player.position.set(0, 2.5, 4); // Reseta a posição do jogador
+    player.position.set(0, 2.5, 4); // Restaura a posição do jogador
   }
 }
 
