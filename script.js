@@ -278,6 +278,205 @@ function createCity() {
     }
 }
 
+// Criar a sala com cama (depression room)
+function createBlackRoomWithBed() {
+    clearScene();
+
+    // Piso da cidade
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 200), //Tamanho do plano
+        new THREE.MeshStandardMaterial({ color: 0x505050 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // Adicionar o céu
+    const sky = new THREE.Mesh(
+        new THREE.SphereGeometry(100, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
+    );
+    scene.add(sky);
+
+    // Criar limites da cidade
+    const cityBounds = createCityBounds();
+    scene.add(cityBounds);
+
+    // Criar edifícios variados
+    const createBuilding = (width, height, depth, color) => {
+        const geometry = new THREE.BoxGeometry(width, height, depth);
+        const material = new THREE.MeshStandardMaterial({ color });
+        const building = new THREE.Mesh(geometry, material);
+        building.castShadow = true;
+        return building;
+    };
+
+    for (let i = 0; i < 15; i++) {
+        const width = Math.random() * 3 + 2; // Largura entre 2 e 5
+        const height = Math.random() * 15 + 5; // Altura entre 5 e 20
+        const depth = Math.random() * 3 + 2; // Profundidade entre 2 e 5
+        const color = Math.random() * 0xffffff;
+
+        const building = createBuilding(width, height, depth, color);
+        building.position.set(
+            Math.random() * 50 - 25,
+            height / 2, // Ajusta posição vertical
+            Math.random() * 50 - 25
+        );
+        scene.add(building);
+    }
+
+    // Criar árvores variadas
+    const createTree = () => {
+        const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
+        const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+        const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+
+        const foliageGeometry = new THREE.SphereGeometry(1.5, 8, 8);
+        const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+        const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+
+        foliage.position.y = 2.5; // Colocar acima do tronco
+        trunk.add(foliage);
+
+        return trunk;
+    };
+
+    for (let i = 0; i < 10; i++) {
+        const tree = createTree();
+        tree.position.set(
+            Math.random() * 50 - 25,
+            1.5, // Base do tronco na altura certa
+            Math.random() * 50 - 25
+        );
+        scene.add(tree);
+    }
+
+    // Criar postes de luz
+    const createLampPost = () => {
+        const postGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5, 12);
+        const postMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+        const post = new THREE.Mesh(postGeometry, postMaterial);
+
+        const lightGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+        const lightMaterial = new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffffaa });
+        const light = new THREE.Mesh(lightGeometry, lightMaterial);
+
+        light.position.y = 2.5; // Colocar a luz no topo do poste
+        post.add(light);
+
+        return post;
+    };
+
+    for (let i = 0; i < 8; i++) {
+        const lampPost = createLampPost();
+        lampPost.position.set(
+            Math.random() * 50 - 25,
+            2.5, // Base na altura do chão
+            Math.random() * 50 - 25
+        );
+        scene.add(lampPost);
+    }
+}
+
+
+function createRoomWithCube() {
+    clearScene();
+       // Piso da cidade
+    const floor = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, 200), //Tamanho do plano
+        new THREE.MeshStandardMaterial({ color: 0x505050 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    scene.add(floor);
+
+    // Adicionar o céu
+    const sky = new THREE.Mesh(
+        new THREE.SphereGeometry(100, 32, 32),
+        new THREE.MeshStandardMaterial({ color: 0x87ceeb, side: THREE.BackSide }) // Azul claro (sky blue)
+    );
+    scene.add(sky);
+
+    // Criar limites da cidade
+    const cityBounds = createCityBounds();
+    scene.add(cityBounds);
+
+    // Criar edifícios variados
+    const createBuilding = (width, height, depth, color) => {
+        const geometry = new THREE.BoxGeometry(width, height, depth);
+        const material = new THREE.MeshStandardMaterial({ color });
+        const building = new THREE.Mesh(geometry, material);
+        building.castShadow = true;
+        return building;
+    };
+
+    for (let i = 0; i < 15; i++) {
+        const width = Math.random() * 3 + 2; // Largura entre 2 e 5
+        const height = Math.random() * 15 + 5; // Altura entre 5 e 20
+        const depth = Math.random() * 3 + 2; // Profundidade entre 2 e 5
+        const color = Math.random() * 0xffffff;
+
+        const building = createBuilding(width, height, depth, color);
+        building.position.set(
+            Math.random() * 50 - 25,
+            height / 2, // Ajusta posição vertical
+            Math.random() * 50 - 25
+        );
+        scene.add(building);
+    }
+
+    // Criar árvores variadas
+    const createTree = () => {
+        const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.3, 3, 12);
+        const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+        const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+
+        const foliageGeometry = new THREE.SphereGeometry(1.5, 8, 8);
+        const foliageMaterial = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+        const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
+
+        foliage.position.y = 2.5; // Colocar acima do tronco
+        trunk.add(foliage);
+
+        return trunk;
+    };
+
+    for (let i = 0; i < 10; i++) {
+        const tree = createTree();
+        tree.position.set(
+            Math.random() * 50 - 25,
+            1.5, // Base do tronco na altura certa
+            Math.random() * 50 - 25
+        );
+        scene.add(tree);
+    }
+
+    // Criar postes de luz
+    const createLampPost = () => {
+        const postGeometry = new THREE.CylinderGeometry(0.1, 0.1, 5, 12);
+        const postMaterial = new THREE.MeshStandardMaterial({ color: 0xaaaaaa });
+        const post = new THREE.Mesh(postGeometry, postMaterial);
+
+        const lightGeometry = new THREE.SphereGeometry(0.5, 8, 8);
+        const lightMaterial = new THREE.MeshStandardMaterial({ color: 0xffffaa, emissive: 0xffffaa });
+        const light = new THREE.Mesh(lightGeometry, lightMaterial);
+
+        light.position.y = 2.5; // Colocar a luz no topo do poste
+        post.add(light);
+
+        return post;
+    };
+
+    for (let i = 0; i < 8; i++) {
+        const lampPost = createLampPost();
+        lampPost.position.set(
+            Math.random() * 50 - 25,
+            2.5, // Base na altura do chão
+            Math.random() * 50 - 25
+        );
+        scene.add(lampPost);
+    }
+}
+
 function createCityBounds() {
     const bounds = new THREE.Group();
 
@@ -405,129 +604,11 @@ function handleDoorCollision(door) {
         console.log("Colisão com porta na cidade - Nenhuma ação necessária.");
     }
 }
-// Criar a sala com cama (depression room)
-function createBlackRoomWithBed() {
-    clearScene(); // Limpa os objetos da sala anterior
-
-    // Piso
-    const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 60),
-        new THREE.MeshStandardMaterial({ color: 0xcccccc })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    scene.add(floor);
-
-    // Paredes pretas
-    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-    
-    // Parede de trás
-    const backWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    backWall.position.set(0, 10, -30);
-    scene.add(backWall);
-
-    // Parede da direita
-    const rightWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    rightWall.rotation.y = -Math.PI / 2;
-    rightWall.position.set(30, 10, 0);
-    scene.add(rightWall);
-
-    // Parede da esquerda
-    const leftWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-30, 10, 0);
-    scene.add(leftWall);
-
-    // Teto
-    const ceiling = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 60),
-        wallMaterial
-    );
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.set(0, 20, 0);
-    scene.add(ceiling);
-
-    // Cama branca
-    const bedMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const bedGeometry = new THREE.BoxGeometry(2, 0.5, 1);
-    const bed = new THREE.Mesh(bedGeometry, bedMaterial);
-    bed.position.set(0, 0.25, 0); // Ajustar a posição conforme necessário
-    scene.add(bed);
-}
 
 
-function createRoomWithCube() {
-       clearScene(); // Limpa os objetos da sala anterior
-
-    // Piso
-    const floor = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 60),
-        new THREE.MeshStandardMaterial({ color: 0xcccccc })
-    );
-    floor.rotation.x = -Math.PI / 2;
-    scene.add(floor);
-
-    // Paredes pretas
-    const wallMaterial = new THREE.MeshStandardMaterial({ color: 0x000000 });
-    
-    // Parede de trás
-    const backWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    backWall.position.set(0, 10, -30);
-    scene.add(backWall);
-
-    // Parede da direita
-    const rightWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    rightWall.rotation.y = -Math.PI / 2;
-    rightWall.position.set(30, 10, 0);
-    scene.add(rightWall);
-
-    // Parede da esquerda
-    const leftWall = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 20),
-        wallMaterial
-    );
-    leftWall.rotation.y = Math.PI / 2;
-    leftWall.position.set(-30, 10, 0);
-    scene.add(leftWall);
-
-    // Teto
-    const ceiling = new THREE.Mesh(
-        new THREE.PlaneGeometry(60, 60),
-        wallMaterial
-    );
-    ceiling.rotation.x = Math.PI / 2;
-    ceiling.position.set(0, 20, 0);
-    scene.add(ceiling);
-
-    // Cubo
-    const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 }); // Cubo vermelho
-    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    cube.position.set(0, 0.5, 0); // Ajustar a posição conforme necessário
-    scene.add(cube);
-}
-
-function clearCurrentRoom() {
-    while (scene.children.length > 0) {
-        scene.remove(scene.children[0]);
-    }
-}
 
 
+//Go back to previous room with key "p"
 document.addEventListener('keydown', (e) => {
     keys[e.key] = true;
 
@@ -536,6 +617,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+//Function to go back to previous room
 function goToPreviousRoom() {
     if (roomHistory.length > 0) {
         const previousRoom = roomHistory.pop(); // Retira a última sala do histórico
